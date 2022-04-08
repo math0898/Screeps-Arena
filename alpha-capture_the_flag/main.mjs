@@ -72,13 +72,13 @@ export function loop () {
         for (var m of melees) meleeRush(m, enemies, enemyFlag);
         for (var r of ranged) rangedRush(r, enemies, enemyFlag);
         for (var h of healers) healerRush(h);
-    } else if (tick < 20) {
+    } else if (tick < 60) {
         for (var h of healers) h.moveTo(myFlag);
         for (var r of ranged) r.moveTo(myFlag);
-        for (var m of healers) m.moveTo(myFlag);
+        for (var m of melees) m.moveTo(myFlag);
     } else {
         enemies = findInRange(myFlag, enemies, 10);
-        if (tick == 21) console.log('Starting with Defense');
+        if (tick == 61) console.log('Starting with Defense');
         for (var m of melees) meleeDefense(m, enemies);
         for (var r of ranged) rangedDefense(r, enemies, myFlag);
         for (var h of healers) healerRush(h);
