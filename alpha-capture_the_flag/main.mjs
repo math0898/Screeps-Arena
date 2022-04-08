@@ -10,30 +10,11 @@ function meleeDefense (c, enemies) {
     if (c.attack(target) == ERR_NOT_IN_RANGE) c.moveTo(target);
 }
 
-function rangedDefense (r, enemies, myFlag) {
-    const target = myFlag.findClosestByRange(enemies);
-    const inRange = findInRange(r, enemies, 3);
-    const inFlagRange = findInRange(myFlag, enemies, 2);
-    if (inRange.length < 3 || inFlagRange.length == 1) {
-        if (r.rangedAttack(target) == ERR_NOT_IN_RANGE) r.moveTo(target);
-    } else r.rangedMassAttack();
-}
-
 function meleeRush (c, enemies, enemyFlag) {
     const target = c.findClosestByPath(enemies);
     if (c.attack(target) == ERR_NOT_IN_RANGE) c.moveTo(target);
 
     if (enemies.length == 0) c.moveTo(enemyFlag);
-}
-
-function rangedRush (r, enemies, enemyFlag) {
-    const target = r.findClosestByPath(enemies);
-    const inRange = findInRange(r, enemies, 3);
-    if (inRange < 3) {
-        if (r.rangedAttack(target) == ERR_NOT_IN_RANGE) r.moveTo(target);
-    } else r.rangedMassAttack();
-
-    if (enemies.length == 0) r.moveTo(enemyFlag);
 }
 
 function healerRush (h) {
@@ -56,6 +37,8 @@ function towerTime (t) {
     }
 }
 
+var creeps = new Array();
+
 export function loop () {
 
     const tick = getTicks();
@@ -68,24 +51,26 @@ export function loop () {
     var healers = getObjectsByPrototype(Creep).filter(c => c.body.some(body => body.type == HEAL) && c.my);
     var towers = getObjectsByPrototype(StructureTower).filter(t => t.my);
 
+    if (tick == 1) {
+        for (var r of ranged) {
+            creeps.push(new Ranger(r, myFlag, enemyFlag));
+        }
+    }
+
     if (tick >= 500) {
         if (tick == 500) console.log('Switching to Rush');
         for (var m of melees) meleeRush(m, enemies, enemyFlag);
-        for (var r of ranged) rangedRush(r, enemies, enemyFlag);
         for (var h of healers) healerRush(h);
+        for (var r of creeps) r.runLogic(enemies, null);
     } else if (tick < 60) {
         for (var h of healers) h.moveTo(myFlag);
-        for (var r of ranged) r.moveTo(myFlag);
+        // for (var r of ranged) r.moveTo(myFlag);
         for (var m of melees) m.moveTo(myFlag);
     } else {
         enemies = findInRange(myFlag, enemies, 10);
         if (tick == 61) console.log('Starting with Defense');
         for (var m of melees) meleeDefense(m, enemies);
-        for (var r of ranged) { 
-            var ranger = new Ranger(r);
-            ranger.runLogic();
-            rangedDefense(r, enemies, myFlag);
-        }
+        for (var r of creeps) r.runLogic(enemies, null);
         for (var h of healers) healerRush(h);
     }
 
