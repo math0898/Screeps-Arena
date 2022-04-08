@@ -3,6 +3,7 @@ import { Creep, Flag, StructureTower } from '/game/prototypes';
 import { ERR_NOT_IN_RANGE, ATTACK, RANGED_ATTACK, HEAL, OK } from '/game/constants';
 import { } from '/arena';
 import { getTicks } from '/game';
+import { Ranger } from "./Ranger.mjs";
 
 function meleeDefense (c, enemies) {
     const target = c.findClosestByPath(enemies);
@@ -80,7 +81,11 @@ export function loop () {
         enemies = findInRange(myFlag, enemies, 10);
         if (tick == 61) console.log('Starting with Defense');
         for (var m of melees) meleeDefense(m, enemies);
-        for (var r of ranged) rangedDefense(r, enemies, myFlag);
+        for (var r of ranged) { 
+            var ranger = new Ranger(r);
+            ranger.runLogic();
+            rangedDefense(r, enemies, myFlag);
+        }
         for (var h of healers) healerRush(h);
     }
 
