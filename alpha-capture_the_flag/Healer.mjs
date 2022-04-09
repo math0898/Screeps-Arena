@@ -10,11 +10,16 @@ export class Healer extends SmartCreep { // ranged heal and move should be simul
      * @param {Creep[]} allies  The current allies still alive.
      */
     runLogic (enemies, allies) {
-        var target = this.creep.findClosestByPath(allies.filter(c => c.hits < c.hitsMax));
-        if (target == null || target == undefined) target = this.creep.findClosestByPath(allies.filter(c => c.body.some(body => body.type == ATTACK)));
-        if (this.creep.heal(target) == ERR_NOT_IN_RANGE) {
-            this.creep.rangedHeal(target);
-            this.creep.moveTo(target);
-        }
+        if (this.mode == 'rush') {
+            this.creep.heal(this.creep);
+            this.creep.moveTo(this.enemyFlag);
+        } else {
+            var target = this.creep.findClosestByPath(allies.filter(c => c.hits < c.hitsMax));
+            if (target == null || target == undefined) target = this.creep.findClosestByPath(allies.filter(c => c.body.some(body => body.type == ATTACK)));
+            if (this.creep.heal(target) == ERR_NOT_IN_RANGE) {
+                this.creep.rangedHeal(target);
+                this.creep.moveTo(target);
+            }
+        } 
     }
 }

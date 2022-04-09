@@ -1,6 +1,6 @@
 import { getObjectsByPrototype, findInRange } from '/game/utils';
 import { Creep, Flag, StructureTower } from '/game/prototypes';
-import { ERR_NOT_IN_RANGE, ATTACK, RANGED_ATTACK, HEAL, OK } from '/game/constants';
+import { ERR_NOT_IN_RANGE, ATTACK, RANGED_ATTACK, HEAL, MOVE, OK } from '/game/constants';
 import { } from '/arena';
 import { getTicks } from '/game';
 import { Ranger } from "./Ranger.mjs";
@@ -33,6 +33,7 @@ function towerTime (t) {
 }
 
 var creeps = new Array();
+var mode = 'defened';
 
 export function loop () {
 
@@ -47,13 +48,19 @@ export function loop () {
     var healers = getObjectsByPrototype(Creep).filter(c => c.body.some(body => body.type == HEAL) && c.my);
     var towers = getObjectsByPrototype(StructureTower).filter(t => t.my);
 
+    if (melees.length + ranged.length < 1 && mode != 'rush') {
+        mode = 'rush';
+        console.log('Switching to rush.');
+        for (var c of creeps) c.setMode('rush');
+    }
+
     if (tick == 1) {
         for (var r of ranged) creeps.push(new Ranger(r, myFlag, enemyFlag));
         for (var h of healers) creeps.push(new Healer(h, myFlag, enemyFlag));
     }
 
     if (tick >= 500) {
-        if (tick == 500) console.log('Switching to Rush');
+        if (tick == 500) console.log('Switching to attack.');
         for (var m of melees) meleeRush(m, enemies, enemyFlag);
         for (var c of creeps) c.runLogic(enemies, allies);
     } else if (tick < 60) { // TODO: create a defensive formation around flag.

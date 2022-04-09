@@ -27,4 +27,13 @@ export class SmartCreep {
     runLogic (enemies, allies) {
 
     }
+
+    /**
+     * Sets the logic mode of this smart creep.
+     * 
+     * @param {string} mode The new mode to put this creep into.
+     */
+    setMode (mode) {
+        this.mode = mode;
+    }
 }

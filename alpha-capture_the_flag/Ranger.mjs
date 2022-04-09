@@ -47,8 +47,8 @@ export class Ranger extends SmartCreep {
      * @param {Creep[]} allies  The current allies still alive.
      */
      runLogic (enemies, allies) {
-        if (this.logic == undefined) this.logic = 'defend'; 
-        switch (this.logic) {
+        if (this.mode == undefined) this.mode = 'defend'; 
+        switch (this.mode) {
             case 'defend': this.defend(enemies, allies); break;
             case 'attack': this.attack(enemies, allies); break;
         }
