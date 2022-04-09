@@ -7,7 +7,7 @@ import { ERR_NOT_IN_RANGE } from '/game/constants';
  * 
  * @author Sugaku
  */
-export class Ranger extends SmartCreep {
+export class Ranger extends SmartCreep { // TODO: Defend, upgrade, and Attack modes
 
     /**
      * Runs the defense logic for a ranger object.
