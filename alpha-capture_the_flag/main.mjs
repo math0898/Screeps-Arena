@@ -10,6 +10,18 @@ import { Melee } from './Melee.mjs';
 var creeps = new Array();
 var mode = 'defend';
 
+function turtle () {
+    const myFlag = getObjectsByPrototype(Flag).find(f => f.my);
+    var targetPositions;
+    if (myFlag.x < 10) targetPositions = [
+        {x: 1, y: 1}, {x: 1, y: 2}, {x: 1, y: 3}, {x: 3, y: 1}, {x: 3, y: 2}, {x: 2, y: 3}, // Healer positions
+        {x: 2, y: 1}, {x: 4, y: 1}, {x: 4, y: 3}, {x: 4, y: 4}, {x: 3, y: 4}, {x: 1, y: 4}, // Ranger positions
+        {x: 2, y: 2}, {x: 3, y: 3} // Meele positions
+    ]; else targetPositions = [
+
+    ];
+}
+
 function init () {
 
     var melees = getObjectsByPrototype(Creep).filter(c => c.body.some(body => body.type == ATTACK) && c.my);
