@@ -10,14 +10,6 @@ import { ERR_NOT_IN_RANGE } from '/game/constants';
 export class Ranger extends SmartCreep {
 
     /**
-     * Hello world method for a multiple files.
-     */
-    hello_world () {
-        console.log('hello world!');
-        console.log(this.creep);
-    }
-
-    /**
      * Runs the defense logic for a ranger object.
      * 
      * @param {Creep[]} enemies  The current enemies still alive.
