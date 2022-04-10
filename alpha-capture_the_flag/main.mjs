@@ -58,6 +58,8 @@ function towerTime (t) {
 
 export function loop () { // todo anti-turtle strategy
 
+    creeps = creeps.filter(c => c.creep.body != undefined);
+
     const tick = getTicks();
 
     var enemies = getObjectsByPrototype(Creep).filter(c => !c.my);
@@ -67,6 +69,7 @@ export function loop () { // todo anti-turtle strategy
     const myFlag = getObjectsByPrototype(Flag).find(f => f.my);
 
     if (tick == 1) {
+        console.log("Switching to full turtle.");
         init();
         mode = 'turtle';
         for (var c of creeps) c.setMode('turtle');
@@ -75,6 +78,9 @@ export function loop () { // todo anti-turtle strategy
         mode = 'defend';
         console.log('Switching to defense.');
         for (var c of creeps) c.setMode('defend');
+    } else if (mode == 'attack' && findInRange(enemyFlag, getObjectsByPrototype(Creep).filter(c => !c.my), 20).length == 0) {
+        console.log("Enemy flag left undefended. Sending rush.");
+        for (var c of creeps) if (c.creep.body.some(body => body.type == HEAL)) c.setMode('rush');
     } else if (getObjectsByPrototype(Creep).filter(c => c.my && c.body.some(body => body.type != MOVE && body.type != HEAL)) < 1 && mode != 'rush') {
         mode = 'rush';
         console.log('Switching to rush.');
