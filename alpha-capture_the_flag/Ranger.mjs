@@ -1,4 +1,5 @@
-import { findInRange } from '/game/utils'
+import { findInRange } from '/game/utils';
+import { getTicks } from '/game';
 import { SmartCreep } from "./SmartCreep.mjs";
 import { ERR_NOT_IN_RANGE } from '/game/constants';
 
@@ -51,6 +52,10 @@ export class Ranger extends SmartCreep { // TODO: Defend, upgrade, and Attack mo
         switch (this.mode) {
             case 'defend': this.defend(enemies, allies); break;
             case 'attack': this.attack(enemies, allies); break;
+            case 'turtle':
+                if (getTicks() > 10 && getTicks() < 60) this.moveToTurtle();
+                else this.defend(enemies, allies);
+                break;
         }
     }
 }

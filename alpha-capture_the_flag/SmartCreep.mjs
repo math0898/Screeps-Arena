@@ -36,4 +36,20 @@ export class SmartCreep {
     setMode (mode) {
         this.mode = mode;
     }
+
+    /**
+     * Sets the turtle position for this creep.
+     * 
+     * @param {pos} pos The turtle position for this creep.
+     */
+    setTurtle (pos) {
+        this.turtlePos = pos;
+    }
+
+    /**
+     * Makes this creep move to their turtle position.
+     */
+    moveToTurtle () {
+        if (this.creep.x != this.turtlePos.x || this.creep.y != this.turtlePos.y) this.creep.moveTo(this.turtlePos);
+    }
 }

@@ -1,5 +1,6 @@
 import { SmartCreep } from "./SmartCreep.mjs";
 import { ERR_NOT_IN_RANGE } from "game/constants";
+import { getTicks } from '/game';
 
 export class Melee extends SmartCreep {
 
@@ -35,6 +36,10 @@ export class Melee extends SmartCreep {
         switch (this.mode) {
             case 'defend': this.defend(enemies); break;
             case 'attack': this.attack(enemies); break;
+            case 'turtle':
+                if (getTicks() > 5 && getTicks() < 60) this.moveToTurtle();
+                else this.defend(enemies, allies);
+                break;
         }
     }
 }

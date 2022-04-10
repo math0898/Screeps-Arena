@@ -18,8 +18,15 @@ function turtle () {
         {x: 2, y: 1}, {x: 4, y: 1}, {x: 4, y: 3}, {x: 4, y: 4}, {x: 3, y: 4}, {x: 1, y: 4}, // Ranger positions
         {x: 2, y: 2}, {x: 3, y: 3} // Meele positions
     ]; else targetPositions = [
-
+        {x: 97, y: 94}, {x: 97, y: 96}, {x: 96, y: 95}, {x: 95, y: 96}, {x: 96, y: 97}, {x: 94, y: 97}, // Healer positions
+        {x: 94, y: 94}, {x: 95, y: 94}, {x: 94, y: 95}, {x: 96, Y: 94}, {x: 94, y: 96}, {x: 97, y: 97}, // Ranger positions
+        {x: 96, y: 96}, {x: 95, y: 95} // Meele positions
     ];
+    var i = 0; 
+    for (var c of creeps) {
+        c.setTurtle(targetPositions[i]);
+        i++;
+    }
 }
 
 function init () {
@@ -30,8 +37,8 @@ function init () {
     const enemyFlag = getObjectsByPrototype(Flag).find(f => !f.my);
     const myFlag = getObjectsByPrototype(Flag).find(f => f.my);
 
-    for (var r of ranged) creeps.push(new Ranger(r, myFlag, enemyFlag));
     for (var h of healers) creeps.push(new Healer(h, myFlag, enemyFlag));
+    for (var r of ranged) creeps.push(new Ranger(r, myFlag, enemyFlag));
     for (var m of melees) creeps.push(new Melee(m, myFlag, enemyFlag));
 }
 
@@ -59,38 +66,27 @@ export function loop () { // todo anti-turtle strategy
     const enemyFlag = getObjectsByPrototype(Flag).find(f => !f.my);
     const myFlag = getObjectsByPrototype(Flag).find(f => f.my);
 
-    if (tick == 1) init();
-    else if (tick == 60) {
+    if (tick == 1) {
+        init();
+        mode = 'turtle';
+        for (var c of creeps) c.setMode('turtle');
+        turtle();
+    } else if (tick == 1000) {
         mode = 'defend';
         console.log('Switching to defense.');
         for (var c of creeps) c.setMode('defend');
+    } else if (getObjectsByPrototype(Creep).filter(c => c.my && c.body.some(body => body.type != MOVE && body.type != HEAL)) < 1 && mode != 'rush') {
+        mode = 'rush';
+        console.log('Switching to rush.');
+        for (var c of creeps) c.setMode('rush');
     } else if (tick == 1500 || enemies.length == 0 && mode != 'attack') {
         mode = 'attack';
         console.log('Switching to attack.');
         for (var c of creeps) c.setMode('attack');
     }
 
-    if (getObjectsByPrototype(Creep).filter(c => c.my && c.body.some(body => body.type != MOVE && body.type != HEAL)) < 1 && mode != 'rush') {
-        mode = 'rush';
-        console.log('Switching to rush.');
-        for (var c of creeps) c.setMode('rush');
-    }
+    if (mode == 'defend' || mode == 'turtle') enemies = findInRange(myFlag, enemies, 10);
 
-    if (tick < 60) { // TODO: create a defensive formation around flag.
-
-        const melees = getObjectsByPrototype(Creep).filter(c => c.body.some(body => body.type == ATTACK) && c.my);
-        const ranged = getObjectsByPrototype(Creep).filter(c => c.body.some(body => body.type == RANGED_ATTACK) && c.my);
-        const healers = getObjectsByPrototype(Creep).filter(c => c.body.some(body => body.type == HEAL) && c.my);
-
-        for (var h of healers) h.moveTo(myFlag);
-        for (var r of ranged) r.moveTo(myFlag);
-        for (var m of melees) m.moveTo(myFlag);
-    }
-
-    if (mode == 'defend') enemies = findInRange(myFlag, enemies, 10);
-
-    if (tick >= 60) {
-        for (var c of creeps) c.runLogic(enemies, allies);
-        for (var t of towers) towerTime(t);
-    }
+    for (var c of creeps) c.runLogic(enemies, allies);
+    for (var t of towers) towerTime(t);
 }
