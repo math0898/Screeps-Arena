@@ -17,8 +17,8 @@ export function loop () {
     var creeps = getObjectsByPrototype(Creep).filter(c => c.my);
     var harvesters = getObjectsByPrototype(Creep).filter(h => h.my && h.role == 'harvester');
 
-    if (harvesters.length < 1) {
-        const obj = spawn.spawnCreep([WORK, WORK, CARRY, CARRY, MOVE, MOVE]);
+    if (harvesters.length < 3 && spawn.store[RESOURCE_ENERGY] >= 500) {
+        const obj = spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE]);
         obj.role = 'harvester';
     }
 
