@@ -1,6 +1,6 @@
 import { findClosestByPath, getObjectsByPrototype } from "/game/utils";
-import { Source } from "/game/prototypes";
-import { ERR_NOT_IN_RANGE } from "/game/constants";
+import { Source, StructureSpawn } from "/game/prototypes";
+import { ERR_NOT_IN_RANGE, RESOURCE_ENERGY } from "/game/constants";
 
 /**
  * The harvester class contains all the logic for harvester creeps.
@@ -18,10 +18,10 @@ export class Harvester {
         if (creep.spawning) return;
         if (creep.source == undefined) creep.source = findClosestByPath(creep, getObjectsByPrototype(Source));
         if (creep.spawn == undefined) creep.spawn = findClosestByPath(creep, getObjectsByPrototype(StructureSpawn));
-        if (creep.store.energy < creep.store.getCapacity()) {
+        if (creep.store[RESOURCE_ENERGY] < creep.store.getCapacity()) {
             if (creep.harvest(creep.source) == ERR_NOT_IN_RANGE) creep.moveTo(creep.source);
         } else {
-            if (creep.transfer(creep.spawn) == ERR_NOT_IN_RANGE) creep.moveTo(creep.spawn);
+            if (creep.transfer(creep.spawn, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) creep.moveTo(creep.spawn);
         }
     }
 }
