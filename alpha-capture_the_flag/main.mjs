@@ -16,11 +16,11 @@ function turtle () {
     if (myFlag.x < 10) targetPositions = [
         {x: 1, y: 1}, {x: 1, y: 2}, {x: 1, y: 3}, {x: 3, y: 1}, {x: 3, y: 2}, {x: 2, y: 3}, // Healer positions
         {x: 2, y: 1}, {x: 4, y: 1}, {x: 4, y: 3}, {x: 4, y: 4}, {x: 3, y: 4}, {x: 1, y: 4}, // Ranger positions
-        {x: 2, y: 2}, {x: 3, y: 3} // Meele positions
+        {x: 2, y: 2}, {x: 3, y: 3} // Melee positions
     ]; else targetPositions = [
         {x: 97, y: 94}, {x: 97, y: 96}, {x: 96, y: 95}, {x: 95, y: 96}, {x: 96, y: 97}, {x: 94, y: 97}, // Healer positions
         {x: 94, y: 94}, {x: 95, y: 94}, {x: 94, y: 95}, {x: 96, Y: 94}, {x: 94, y: 96}, {x: 97, y: 97}, // Ranger positions
-        {x: 96, y: 96}, {x: 95, y: 95} // Meele positions
+        {x: 96, y: 96}, {x: 95, y: 95} // Melee positions
     ];
     var i = 0; 
     for (var c of creeps) {
@@ -46,7 +46,7 @@ function towerTime (t) {
     const heal = t.findClosestByRange(getObjectsByPrototype(Creep).filter(c => c.my && c.hits < c.hitsMax));
     if (heal != null) t.heal(heal);
     else {
-        var target = t.findClosestByRange(getObjectsByPrototype(Creep).filter(c => !c.my && c.body.some(b => b.type == HEAL)));
+        var target = t.findInRange(getObjectsByPrototype(Creep).filter(c => !c.my && c.body.some(b => b.type == HEAL), 10));
         if (target != null) t.attack(target);
         else {
             var targets = findInRange(t, getObjectsByPrototype(Creep).filter(c => !c.my), 10);
@@ -91,7 +91,7 @@ export function loop () { // todo anti-turtle strategy
         for (var c of creeps) c.setMode('attack');
     }
 
-    if (mode == 'defend' || mode == 'turtle') enemies = findInRange(myFlag, enemies, 10);
+    if (mode == 'defend' || mode == 'turtle') enemies = findInRange(myFlag, enemies, 9);
 
     for (var c of creeps) c.runLogic(enemies, allies);
     for (var t of towers) towerTime(t);
