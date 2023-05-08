@@ -1,4 +1,5 @@
 import { Creep } from "game/prototypes";
+import { getObjectsByPrototype } from "game/utils";
 
 /**
  * 
@@ -15,6 +16,12 @@ export function Squad (healer1, healer2, ranger1, ranger2) {
     this.rangers.push(ranger1);
     this.rangers.push(ranger2);
 }
+
+Squad.prototype.costMatrix = undefined;
+
+Squad.prototype.setCostMatrix = function (matrix) {
+    this.costMatrix = matrix;
+};
 
 Squad.prototype.merge = function (mergeTo) { // TODO: Generalize, might need to consider dead creeps.
     this.healers[0].moveTo({x: mergeTo.x - 1, y: mergeTo.y - 1});
@@ -42,7 +49,7 @@ Squad.prototype.moveTo = function (pos, checkMerged = true) { // TODO: Cost matr
             return;
         }
     }
-    const arr = this.rangers[0].findPathTo(pos);
+    const arr = this.rangers[0].findPathTo(pos, { costMatrix: this.costMatrix });
     var dir;
     if (arr[0].x == this.rangers[0].x) { // Vertical
         if (arr[0].y < this.rangers[0].y) this.move(1);
@@ -55,4 +62,15 @@ Squad.prototype.moveTo = function (pos, checkMerged = true) { // TODO: Cost matr
     else if (arr[0].y > this.rangers[0].y) dir += 1;
     if (dir < 0) dir *= -1;
     this.move(dir);
+};
+
+Squad.prototype.logic = function () {
+    const enemies = getObjectsByPrototype(Creep).filter((c) => !c.my);
+    const inRangeEnemies = this.rangers[0].findInRange(enemies, 3);
+    if (inRangeEnemies.length > 3) for (let c in this.rangers) this.rangers[c].rangedMassAttack(); // TODO: Little more nuance needed
+    else if (enemies.length > 0) for (let c in this.rangers) this.rangers[c].rangedAttack(enemies[0]); // TODO: Lowest Health or healers
+    var lowest = this.rangers[0];
+    if (this.rangers[1].hits < lowest.hits) lowest = this.rangers[1];
+    for (let i in this.healers) if (this.healers[i].hits < lowest.hits) lowest = this.healers[i];
+    for (let i in this.healers) this.healers[i].heal(lowest);
 };
