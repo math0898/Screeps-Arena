@@ -1,6 +1,6 @@
 import { ATTACK, HEAL, RANGED_ATTACK } from "game/constants";
 import { Creep } from "game/prototypes";
-import { getObjectsByPrototype } from "game/utils";
+import { getObjectsByPrototype, getTicks } from "game/utils";
 import { Squad } from "./Squad.mjs";
 
 var melee = [];
@@ -19,6 +19,11 @@ var firstTick = function () {
 
 export function loop () {
     firstTick();
-    squads[0].moveTo({x: 50, y: 7});
-    squads[1].moveTo({x: 12, y: 19});
+    if (getTicks() < 10) {
+        squads[0].moveTo({x: 50, y: 7}, false);
+        squads[1].moveTo({x: 12, y: 19}, false);
+    } else {
+        squads[0].moveTo({x: 50, y: 7});
+        squads[1].moveTo({x: 12, y: 19});
+    }
 }

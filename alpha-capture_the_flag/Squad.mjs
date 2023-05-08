@@ -16,12 +16,32 @@ export function Squad (healer1, healer2, ranger1, ranger2) {
     this.rangers.push(ranger2);
 }
 
+Squad.prototype.merge = function (mergeTo) { // TODO: Generalize, might need to consider dead creeps.
+    this.healers[0].moveTo({x: mergeTo.x - 1, y: mergeTo.y - 1});
+    this.healers[1].moveTo({x: mergeTo.x, y: mergeTo.y - 1});
+    this.rangers[1].moveTo({x: mergeTo.x - 1, y: mergeTo.y});
+};
+
+Squad.prototype.isMerged = function () {
+    var outOfFormation = false;
+    const target = { x: this.rangers[0].x, y: this.rangers[0].y }; // TODO: This might need to be generalized, consider dead creeps.
+    for (let i in this.healers) if (Math.abs(this.healers[i].x - target.x) > 1 || Math.abs(this.healers[i].y - target.y) > 1) outOfFormation = true;
+    for (let i in this.rangers) if (Math.abs(this.rangers[i].x - target.x) > 1 || Math.abs(this.rangers[i].y - target.y) > 1) outOfFormation = true;
+    return !outOfFormation;
+};
+
 Squad.prototype.move = function (dir) { // TODO: Fatigue Check
     for (let i in this.healers) this.healers[i].move(dir);
     for (let i in this.rangers) this.rangers[i].move(dir);
 };
 
-Squad.prototype.moveTo = function (pos) { // TODO: Cost matrix 2x2
+Squad.prototype.moveTo = function (pos, checkMerged = true) { // TODO: Cost matrix 2x2
+    if (checkMerged) {
+        if (!this.isMerged()) {
+            this.merge(this.rangers[0]);
+            return;
+        }
+    }
     const arr = this.rangers[0].findPathTo(pos);
     var dir;
     if (arr[0].x == this.rangers[0].x) { // Vertical
