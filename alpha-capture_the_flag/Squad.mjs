@@ -66,9 +66,9 @@ Squad.prototype.moveTo = function (pos, checkMerged = true) { // TODO: Cost matr
 
 Squad.prototype.logic = function () {
     const enemies = getObjectsByPrototype(Creep).filter((c) => !c.my);
-    const inRangeEnemies = this.rangers[0].findInRange(enemies, 3);
+    const inRangeEnemies = this.rangers[0].findInRange(enemies, 4);
     if (inRangeEnemies.length > 3) for (let c in this.rangers) this.rangers[c].rangedMassAttack(); // TODO: Little more nuance needed
-    else if (enemies.length > 0) for (let c in this.rangers) this.rangers[c].rangedAttack(enemies[0]); // TODO: Lowest Health or healers
+    else if (inRangeEnemies.length > 0) for (let c in this.rangers) this.rangers[c].rangedAttack(inRangeEnemies[0]); // TODO: Lowest Health or healers
     var lowest = this.rangers[0];
     if (this.rangers[1].hits < lowest.hits) lowest = this.rangers[1];
     for (let i in this.healers) if (this.healers[i].hits < lowest.hits) lowest = this.healers[i];
