@@ -1,6 +1,6 @@
-import { findClosestByPath, getObjectsByPrototype } from "/game/utils";
-import { Source, StructureSpawn } from "/game/prototypes";
-import { ERR_NOT_IN_RANGE, RESOURCE_ENERGY } from "/game/constants";
+import { findClosestByPath, getObjectsByPrototype } from "game/utils";
+import { Source, StructureSpawn, Creep } from "game/prototypes";
+import { ERR_NOT_IN_RANGE, RESOURCE_ENERGY } from "game/constants";
 
 /**
  * The harvester class contains all the logic for harvester creeps.

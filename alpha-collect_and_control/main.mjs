@@ -1,31 +1,30 @@
-import { getObjectsByPrototype, findInRange } from '/game/utils';
-import { Creep, StructureSpawn, ScoreCollector } from '/game/prototypes';
-import { ATTACK, RANGED_ATTACK, HEAL, MOVE, WORK, CARRY } from '/game/constants';
-import { } from '/arena';
-import { Harvester } from './Harvester.mjs';
+import { getObjectsByPrototype } from 'game/utils';
+import { StructureSpawn, StructureContainer, Creep } from 'game/prototypes';
+import { MOVE, CARRY, ERR_NOT_IN_RANGE } from 'game/constants';
+import { RESOURCE_SCORE, ScoreCollector } from 'arena/season_alpha/collect_and_control/basic';
 
-/**
- * Make execution loop of this AI.
- * 
- * @author Sugaku
- */
-export function loop () {
+let creep;
 
-    const spawn = getObjectsByPrototype(StructureSpawn).find(s => s.my);
-    const scoreContainer = getObjectsByPrototype(ScoreCollector).find(s => true);
-
-    var creeps = getObjectsByPrototype(Creep).filter(c => c.my);
-    var harvesters = getObjectsByPrototype(Creep).filter(h => h.my && h.role == 'harvester');
-
-    if (harvesters.length < 3 && spawn.store[RESOURCE_ENERGY] >= 500) {
-        const obj = spawn.spawnCreep([WORK, WORK, WORK, CARRY, CARRY, CARRY, MOVE]);
-        obj.role = 'harvester';
-    }
-
-    for (var c of creeps) {
-        switch (c.role) {
-            case undefined: c.role = 'harvester';
-            case 'harvester': Harvester.runLogic(c); break;
+export function loop() {
+    let creeps = getObjectsByPrototype(Creep).filter(c => c.my);
+    var mySpawn = getObjectsByPrototype(StructureSpawn).find(obj => obj.my);
+    var creepBody = [MOVE,MOVE,MOVE,MOVE,MOVE,CARRY,CARRY,CARRY,CARRY,CARRY];
+    mySpawn.spawnCreep(creepBody);
+    for (let c in creeps) {
+        let creep = creeps[c];
+        if(creep.store[RESOURCE_SCORE] > 0) {
+            var scoreCollector = getObjectsByPrototype(ScoreCollector)[0];
+            if(creep.transfer(scoreCollector, RESOURCE_SCORE) == ERR_NOT_IN_RANGE) {
+                creep.moveTo(scoreCollector);
+            }
+        } else {
+            var containers = getObjectsByPrototype(StructureContainer);
+            if(containers.length > 0) {
+                var container = creep.findClosestByPath(containers);
+                if(creep.withdraw(container, RESOURCE_SCORE) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(container);
+                }
+            }
         }
     }
 }
