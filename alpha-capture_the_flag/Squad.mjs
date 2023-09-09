@@ -42,7 +42,7 @@ Squad.prototype.move = function (dir) { // TODO: Fatigue Check
     for (let i in this.rangers) this.rangers[i].move(dir);
 };
 
-Squad.prototype.moveTo = function (pos, checkMerged = true) { // TODO: Cost matrix 2x2
+Squad.prototype.moveTo = function (pos, checkMerged = true) {
     if (checkMerged) {
         if (!this.isMerged()) {
             this.merge(this.rangers[0]);
