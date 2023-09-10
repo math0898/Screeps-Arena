@@ -40,6 +40,20 @@ Squad.prototype.isMerged = function () {
     return !outOfFormation;
 };
 
+Squad.prototype.verify = function () {
+    var alive = true;
+    for (let i in this.healers) if (this.healers[i] == undefined) return false;
+    for (let i in this.rangers) if (this.rangers[i] == undefined) return false;
+    return alive;
+};
+
+Squad.prototype.fatigue = function () {
+    var val = 0;
+    for (let i in this.healers) if (this.healers[i].fatigue > val) val = this.healers[i].fatigue;
+    for (let i in this.rangers) if (this.rangers[i].fatigue > val) val = this.rangers[i].fatigue;
+    return val;
+};
+
 Squad.prototype.move = function (dir) { // TODO: Fatigue Check
     for (let i in this.healers) this.healers[i].move(dir);
     for (let i in this.rangers) this.rangers[i].move(dir);
@@ -48,13 +62,15 @@ Squad.prototype.move = function (dir) { // TODO: Fatigue Check
 Squad.prototype.moveTo = function (pos, checkMerged = true) {
     if (checkMerged) {
         if (!this.isMerged()) {
-            if (this.mergeGoal == undefined) this.mergeGoal = { x: this.rangers[0].x, y: this.rangers[0].y - 6};
+            if (this.mergeGoal == undefined) this.mergeGoal = { x: this.rangers[0].x, y: this.rangers[0].y - 5};
             this.merge(this.mergeGoal);
             return;
         }
         this.mergeGoal = undefined;
     }
+    if (this.fatigue() > 0) return;
     const arr = this.rangers[0].findPathTo(pos, { costMatrix: this.costMatrix });
+    if (arr == undefined || arr[0] == undefined) return;
     var dir;
     if (arr[0].x == this.rangers[0].x) { // Vertical
         if (arr[0].y < this.rangers[0].y) this.move(1);

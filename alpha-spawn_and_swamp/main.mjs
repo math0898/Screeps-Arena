@@ -57,6 +57,7 @@ export function loop() {
     let containers = getObjectsByPrototype(StructureContainer).filter(s => s.store.getUsedCapacity() > 0);
     for (let f in fillers) {
         let filler = fillers[f];
+        if (filler == undefined) continue; // TODO: Actually remove from list.
         if (filler.store.getFreeCapacity(RESOURCE_ENERGY) > 0) {
             let container = filler.findClosestByPath(containers);
             if (filler.withdraw(container, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) filler.moveTo(container);
@@ -66,6 +67,7 @@ export function loop() {
     // Squad Logic
     for (let s in squads) {
         let squad = squads[s];
+        if (squad.verify() == false) continue; // TODO: Actually remove from list and switch to individuals
         squad.moveTo(enemySpawn);
         // console.log(squad.attack(enemySpawn));
         squad.logic();
