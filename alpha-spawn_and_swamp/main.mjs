@@ -48,7 +48,8 @@ export function loop() {
     }
 
     if (awaitingSquad.length == 4) {
-        squads.push(new Squad(awaitingSquad.pop(), awaitingSquad.pop(), awaitingSquad.pop(), awaitingSquad.pop()));
+        const tmp = [ awaitingSquad.pop(), awaitingSquad.pop(), awaitingSquad.pop(), awaitingSquad.pop() ];
+        squads.push(new Squad(tmp[2], tmp[3], tmp[1], tmp[0]));
         squads[squads.length - 1].setCostMatrix(squadMatrix);
     }
 
@@ -66,6 +67,7 @@ export function loop() {
     for (let s in squads) {
         let squad = squads[s];
         squad.moveTo(enemySpawn);
+        // console.log(squad.attack(enemySpawn));
         squad.logic();
     }
 

@@ -1,3 +1,4 @@
+import { ERR_NOT_IN_RANGE, OK } from "game/constants";
 import { Creep, StructureSpawn } from "game/prototypes";
 import { getObjectsByPrototype } from "game/utils";
 
@@ -15,6 +16,7 @@ export function Squad (healer1, healer2, ranger1, ranger2) {
     this.rangers = [];
     this.rangers.push(ranger1);
     this.rangers.push(ranger2);
+    this.mergeGoal = undefined;
 }
 
 Squad.prototype.costMatrix = undefined;
@@ -27,6 +29,7 @@ Squad.prototype.merge = function (mergeTo) { // TODO: Generalize, might need to 
     this.healers[0].moveTo({x: mergeTo.x - 1, y: mergeTo.y - 1});
     this.healers[1].moveTo({x: mergeTo.x, y: mergeTo.y - 1});
     this.rangers[1].moveTo({x: mergeTo.x - 1, y: mergeTo.y});
+    this.rangers[0].moveTo({x: mergeTo.x, y: mergeTo.y});
 };
 
 Squad.prototype.isMerged = function () {
@@ -45,9 +48,11 @@ Squad.prototype.move = function (dir) { // TODO: Fatigue Check
 Squad.prototype.moveTo = function (pos, checkMerged = true) {
     if (checkMerged) {
         if (!this.isMerged()) {
-            this.merge(this.rangers[0]);
+            if (this.mergeGoal == undefined) this.mergeGoal = { x: this.rangers[0].x, y: this.rangers[0].y - 6};
+            this.merge(this.mergeGoal);
             return;
         }
+        this.mergeGoal = undefined;
     }
     const arr = this.rangers[0].findPathTo(pos, { costMatrix: this.costMatrix });
     var dir;
@@ -75,4 +80,22 @@ Squad.prototype.logic = function () {
     if (this.rangers[1].hits < lowest.hits) lowest = this.rangers[1];
     for (let i in this.healers) if (this.healers[i].hits < lowest.hits) lowest = this.healers[i];
     for (let i in this.healers) this.healers[i].heal(lowest);
+};
+
+Squad.prototype.attack = function (target) {
+    var error = OK;
+    for (let r in this.rangers) {
+        const result = this.rangers[r].rangedAttack(target);
+        if (result < error) error = result;
+    }
+    return error;
+};
+
+Squad.prototype.heal = function (target) {
+    var error = OK;
+    for (let h in this.healers) {
+        const result = this.healers[h].heal(target);
+        if (result < error) error = result;
+    }
+    return error;
 };
