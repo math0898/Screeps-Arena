@@ -1,6 +1,6 @@
 import { getTicks, getObjectsByPrototype, findInRange } from 'game/utils';
 import { Creep, StructureSpawn } from 'game/prototypes';
-import { ATTACK, MOVE, TOUGH, WORK, ERR_NOT_IN_RANGE, RESOURCE_ENERGY } from 'game/constants';
+import { ATTACK, MOVE, TOUGH, WORK, ERR_NOT_IN_RANGE, RESOURCE_ENERGY, RIGHT } from 'game/constants';
 
 import { EscortCreep } from 'arena/season_4/escort_run/basic';
 import { Flag, Structure } from 'game';
@@ -13,9 +13,15 @@ const flag = getObjectsByPrototype(Flag).find(i => i.my);
 var currentTick;
 var macroDetected = false;
 var tug = undefined;
+var tugDied = false;
 
 export function loop () {
     currentTick = getTicks();
+
+    if (tug != undefined && tug?.hits == undefined) {
+        tug = undefined;
+        tugDied = true;
+    }
 
     if (enemySpawn?.spawning != undefined) {
         let pendingCreep = enemySpawn.spawning.creep.body;
@@ -36,21 +42,29 @@ export function loop () {
 
 
     var targets = getObjectsByPrototype(Creep).filter(c => !c.my);
-    let targetsNearEscort = findInRange(escortCreep, targets, 6); // TODO: Filter to nearest.
+    let targetsNearEscort = findInRange(escortCreep, targets, 3); // TODO: Filter to nearest.
 
-    if (tug == undefined || tug?.spawning || targetsNearEscort.length > 1) { // Rush to flag, or run.
+    console.log("Enemies Nearby: " + targetsNearEscort.length);
+    if (tug == undefined || tug?.spawning || tugDied || targetsNearEscort.length >= 1) { // Rush to flag, or run.
+        console.log("Rush to flag, or run.");
         escortCreep?.moveTo(flag);
         // Escort is under attack.
-        if (tug != undefined && targetsNearEscort.length > 1) {
+        if (tug != undefined && targetsNearEscort.length >= 1) {
             if (tug.attack(targetsNearEscort[0]) == ERR_NOT_IN_RANGE) {
                 tug.moveTo(targetsNearEscort[0]);
             }
         }
     } else if (targetsNearEscort.length == 0) { // No enemies nearby, utilize tug and push to flag.
         if (escortCreep?.getRangeTo(tug) <= 1) {
-            tug.moveTo(flag);
-            tug.pull(escortCreep);
-            escortCreep?.moveTo(tug);
+            if (flag?.x == tug?.x && flag?.y == tug?.y) {
+                tug.move(RIGHT);
+                tug.pull(escortCreep);
+                escortCreep?.moveTo(tug);
+            } else {
+                tug.moveTo(flag);
+                tug.pull(escortCreep);
+                escortCreep?.moveTo(tug);
+            }
         } else {
             tug.moveTo(escortCreep);
             escortCreep?.moveTo(flag);
