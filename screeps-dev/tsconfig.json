@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "declaration": false,
+    "baseUrl": ".",
+    "paths": {
+      "@lib/*": ["src/lib/*"],
+      "game/*": ["./node_modules/@screeps/arena-api/*"],
+      "arena/*": ["./node_modules/@screeps/arena-api/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}
