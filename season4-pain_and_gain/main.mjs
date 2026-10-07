@@ -1,7 +1,14 @@
-import { } from 'game/utils';
-import { } from 'game/prototypes';
-import { } from 'game/constants';
+import { getObjectsByPrototype } from 'game/utils';
+import { Creep } from 'game/prototypes';
+import { ScoreFlag } from 'arena/season_4/pain_and_gain/basic';
 
-export function loop() {
-    // Your code goes here
+function loop() {
+    var flag = getObjectsByPrototype(ScoreFlag)[0];
+    var myCreeps = getObjectsByPrototype(Creep).filter(object => object.my);
+    for (var creep of myCreeps) {
+        creep.moveTo(flag);
+    }
 }
+
+export { loop };
+//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoibWFpbi5tanMiLCJzb3VyY2VzIjpbIi4uL3NjcmVlcHMtZGV2L3NyYy9hcmVuYXMvc2Vhc29uNC1wYWluX2FuZF9nYWluL21haW4udHMiXSwic291cmNlc0NvbnRlbnQiOlsiaW1wb3J0IHtnZXRPYmplY3RzQnlQcm90b3R5cGV9IGZyb20gJ2dhbWUvdXRpbHMnO1xuaW1wb3J0IHtDcmVlcH0gZnJvbSAnZ2FtZS9wcm90b3R5cGVzJztcbmltcG9ydCB7U2NvcmVGbGFnfSBmcm9tICdhcmVuYS9zZWFzb25fNC9wYWluX2FuZF9nYWluL2Jhc2ljJztcblxuZXhwb3J0IGZ1bmN0aW9uIGxvb3AoKSB7XG4gICAgdmFyIGZsYWcgPSBnZXRPYmplY3RzQnlQcm90b3R5cGUoU2NvcmVGbGFnKVswXTtcbiAgICB2YXIgbXlDcmVlcHMgPSBnZXRPYmplY3RzQnlQcm90b3R5cGUoQ3JlZXApLmZpbHRlcihvYmplY3QgPT4gb2JqZWN0Lm15KTtcbiAgICBmb3IodmFyIGNyZWVwIG9mIG15Q3JlZXBzKSB7XG4gICAgICAgIGNyZWVwLm1vdmVUbyhmbGFnKTtcbiAgICB9XG59Il0sIm5hbWVzIjpbXSwibWFwcGluZ3MiOiI7Ozs7U0FJZ0IsSUFBSSxHQUFBO0lBQ2hCLElBQUksSUFBSSxHQUFHLHFCQUFxQixDQUFDLFNBQVMsQ0FBQyxDQUFDLENBQUMsQ0FBQztBQUM5QyxJQUFBLElBQUksUUFBUSxHQUFHLHFCQUFxQixDQUFDLEtBQUssQ0FBQyxDQUFDLE1BQU0sQ0FBQyxNQUFNLElBQUksTUFBTSxDQUFDLEVBQUUsQ0FBQztBQUN2RSxJQUFBLEtBQUksSUFBSSxLQUFLLElBQUksUUFBUSxFQUFFO0FBQ3ZCLFFBQUEsS0FBSyxDQUFDLE1BQU0sQ0FBQyxJQUFJLENBQUM7SUFDdEI7QUFDSjs7In0=

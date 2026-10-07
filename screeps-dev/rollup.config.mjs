@@ -16,6 +16,11 @@ const arenas = [
     name: 'escort_run',
     input: 'src/arenas/season4-escort_run/main.ts',
     outputDir: path.resolve('..', 'season4-escort_run')
+  },
+  {
+    name: 'pain_and_gain',
+    input: 'src/arenas/season4-pain_and_gain/main.ts',
+    outputDir: path.resolve('..', 'season4-pain_and_gain')
   }
 ];
 

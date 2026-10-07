@@ -6,7 +6,8 @@
     "typecheck": "tsc --noEmit",
     "push": "rollup -c",
     "push:swamp": "rollup -c --configArena spawn_and_swamp",
-    "push:escort": "rollup -c --configArena escort_run"
+    "push:escort": "rollup -c --configArena escort_run",
+    "push:pain": "rollup -c --configArena pain_and_gain"
   },
   "devDependencies": {
     "@rollup/plugin-commonjs": "^28.0.0",
