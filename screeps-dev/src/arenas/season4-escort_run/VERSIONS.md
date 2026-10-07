@@ -9,18 +9,18 @@
 Tested against:
 - Idle Opponent: ✅
 - RickStallion v3: ✅
-- Kerubii v14: ❌
+- Kerobii v14: ❌
 - Stachu3478 v13: ✅
 - Stachu3478 v8: ✅
 
 ## v4 (Estimated: 1432 MMR)
 
-Added macro strategy detection and tug strategy to attempt to rush towards flag. A single attack bodypart was put on the tug in an attempt to fend of kerubii v15 but it's failed. More development and testing is needed, but it seems like this strategy may be a dead end. 
+Added macro strategy detection and tug strategy to attempt to rush towards flag. A single attack bodypart was put on the tug in an attempt to fend of kerobii v15 but it's failed. More development and testing is needed, but it seems like this strategy may be a dead end. 
 
 Tested against:
 - Idle Opponent: ✅
-- kerubii v15: ❌
+- kerobii v15: ❌
 - RickStallion v16: ✅
 - temik911 v15: ✅
-- kerubii v28: ❌
+- kerobii v28: ❌
 - RickStallion v14: ✅
