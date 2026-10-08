@@ -1,4 +1,4 @@
-# Versions (Season 4 - Pain and Gain )
+# Versions (Season 4 - Pain and Gain)
 
 ## v2 (Estimated: 475 MMR, Rank #45)
 
@@ -22,4 +22,4 @@ Tested against:
 
 ## v1 (Estimated: 8 MMR, Rank #64)
 
-Default example code. Can be idle opponent, and not much else.
+Default example code. Can beat idle opponent, and not much else.
