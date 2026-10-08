@@ -10,9 +10,9 @@
     "baseUrl": ".",
     "paths": {
       "@lib/*": ["src/lib/*"],
-      "game/*": ["./node_modules/@screeps/arena-api/*"],
-      "arena/*": ["./node_modules/@screeps/arena-api/*"]
+      "game/*": ["typings/game/*"],
+      "arena/*": ["typings/season_4/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "typings/**/*"]
 }
