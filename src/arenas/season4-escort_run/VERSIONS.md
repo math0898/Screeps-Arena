@@ -1,6 +1,6 @@
 # Versions (Season 4 - Escort Run )
 
-## v5 (Estimated: 2552 MMR)
+## v5 (Estimated: 3751 MMR, Rank #1)
 
 - Investigated and fixed a bug that caused the escort to stop while under attack.
 - Tug now successfully moves out of the way upon reaching the flag.
