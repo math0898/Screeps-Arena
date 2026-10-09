@@ -4,6 +4,12 @@ import { ScoreFlag } from 'arena/season_4/pain_and_gain/basic';
 import { CombatLibs } from '@lib/Combat.js';
 import { RANGED_ATTACK, ATTACK, HEAL } from 'game/constants';
 
+declare module "game/prototypes/creep" {
+    interface Creep {
+        targetFlag?: ScoreFlag;
+    } 
+};
+
 var flags: ScoreFlag[];
 var fighting: boolean = false;
 var claimedFlags: number = 1;
@@ -20,14 +26,16 @@ export function loop () {
     for (var creep of myCreeps) {
 
         if (creep.body.filter(b => b.type == RANGED_ATTACK && b.hits > 0).length > 0) {
-            const targets = CombatLibs.nearbyEnemyCreeps(creep);
+            const targets: Creep[] = CombatLibs.nearbyEnemyCreeps(creep);
             if (targets.length >= 3) {
                 creep.rangedMassAttack(); // AOE is highest DPS here
                 fighting = true;
             } else if (targets.length > 0) { // Execute lowest health first.
-                const target = CombatLibs.lowestHealthCreep(targets);
-                creep.rangedAttack(target);
-                fighting = true;
+                const target: Creep | undefined = CombatLibs.lowestHealthCreep(targets);
+                if (target != undefined) {
+                    creep.rangedAttack(target);
+                    fighting = true;
+                }
             }
         } else if (creep.body.filter(b => b.type == HEAL && b.hits > 0).length > 0) {
             const healBodyparts = creep.body.filter(b => b.type == HEAL && b.hits > 0).length;
@@ -45,8 +53,8 @@ export function loop () {
         } else if (creep.body.filter(b => b.type == ATTACK && b.hits > 0).length > 0) {
             const targets = CombatLibs.nearbyEnemyCreeps(creep, 1);
             if (targets.length > 0) {
-                const target = CombatLibs.lowestHealthCreep(targets);
-                creep.attack(target);
+                const target: Creep | undefined = CombatLibs.lowestHealthCreep(targets);
+                if (target != undefined) creep.attack(target);
                 fighting = true;
             }
         } else {

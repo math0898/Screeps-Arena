@@ -1,5 +1,16 @@
 # Versions (Season 4 - Pain and Gain)
 
+## v3 (Estimated: )
+
+- 
+
+Tested against:
+- Idle Opponent: ✅
+- MBFishhh v146: ❌
+- temik911 v10: ❌
+- DillyDally v17: ❌
+- temik911 v67: ❌
+
 ## v2 (Estimated: 475 MMR, Rank #45)
 
 - Implemented basic combat code, attack enemies that are nearby.
