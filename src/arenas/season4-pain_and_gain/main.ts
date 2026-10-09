@@ -2,7 +2,7 @@ import { getObjectsByPrototype } from 'game/utils';
 import { Creep } from 'game/prototypes';
 import { ScoreFlag } from 'arena/season_4/pain_and_gain/basic';
 import { CombatLibs } from '@lib/Combat.js';
-import { RANGED_ATTACK, ATTACK, HEAL } from 'game/constants';
+import { RANGED_ATTACK, ATTACK, HEAL, TOP } from 'game/constants';
 
 declare module "game/prototypes/creep" {
     interface Creep {
@@ -12,6 +12,7 @@ declare module "game/prototypes/creep" {
 
 var flags: ScoreFlag[];
 var fighting: boolean = false;
+var combat: boolean = false;
 var claimedFlags: number = 1;
 
 function updateFlags () {
@@ -20,21 +21,23 @@ function updateFlags () {
 
 export function loop () {
     updateFlags();
-    fighting = false;
+    if (combat == false) fighting = false;
+    else fighting = true;
     var flag = getObjectsByPrototype(ScoreFlag)[0];
     var myCreeps = getObjectsByPrototype(Creep).filter(object => object.my);
     for (var creep of myCreeps) {
 
         if (creep.body.filter(b => b.type == RANGED_ATTACK && b.hits > 0).length > 0) {
+            creep.rangedMassAttack(); // Default to an AOE attack, it hits enemies which move into range, and can be done while moving.
             const targets: Creep[] = CombatLibs.nearbyEnemyCreeps(creep);
             if (targets.length >= 3) {
                 creep.rangedMassAttack(); // AOE is highest DPS here
-                fighting = true;
+                combat = true;
             } else if (targets.length > 0) { // Execute lowest health first.
                 const target: Creep | undefined = CombatLibs.lowestHealthCreep(targets);
                 if (target != undefined) {
                     creep.rangedAttack(target);
-                    fighting = true;
+                    combat = true;
                 }
             }
         } else if (creep.body.filter(b => b.type == HEAL && b.hits > 0).length > 0) {
@@ -48,6 +51,7 @@ export function loop () {
                 const lowestHealthRanged = CombatLibs.lowestHealthCreep(rangedAllies, healBodyparts * 4);
                 if (lowestHealthRanged != undefined) {
                     creep.rangedHeal(lowestHealthRanged);
+                    creep.moveTo(lowestHealthRanged); // We move closer so we can eventually melee heal them.
                 }
             }
         } else if (creep.body.filter(b => b.type == ATTACK && b.hits > 0).length > 0) {
@@ -55,7 +59,7 @@ export function loop () {
             if (targets.length > 0) {
                 const target: Creep | undefined = CombatLibs.lowestHealthCreep(targets);
                 if (target != undefined) creep.attack(target);
-                fighting = true;
+                combat = true;
             }
         } else {
             if (creep.targetFlag == undefined) {
@@ -64,11 +68,16 @@ export function loop () {
             }
         }
 
-        if (!fighting) {
+        // TODO: Assign target flags to fighting units when no more enemy combat creeps are detected.
+        if (creep.getRangeTo(creep.targetFlag == undefined ? flag : creep.targetFlag) > 2) {
             creep.moveTo(creep.targetFlag == undefined ? flag : creep.targetFlag);
         } else {
-            if (creep.getRangeTo(creep.targetFlag == undefined ? flag : creep.targetFlag) > 1) {
-                creep.moveTo(creep.targetFlag == undefined ? flag : creep.targetFlag); // Too far to activate, we can get closer.
+            const difX: number = creep.x - (creep.targetFlag == undefined ? flag : creep.targetFlag).x;
+            const difY: number = creep.y - (creep.targetFlag == undefined ? flag : creep.targetFlag).y;
+            if (fighting && difX <= 1 && difY <= 1) { // TODO: Make this a little more logical, move away, not up.
+                creep.move(TOP); // Move off the flag if we're on it and in combat. 
+            } else {
+                creep.moveTo(creep.targetFlag == undefined ? flag : creep.targetFlag);
             }
         }
     }

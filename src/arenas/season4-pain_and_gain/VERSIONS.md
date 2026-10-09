@@ -1,8 +1,11 @@
 # Versions (Season 4 - Pain and Gain)
 
-## v3 (Estimated: )
+## v3 (Estimated: 480 MMR, Rank #45)
 
-- 
+- Healers now move closer to targets they've ranged heal.
+- Ranged now mass attack by default on movement.
+- Creeps now move off flags if combat is detected.
+- Fixed combat detection bug.
 
 Tested against:
 - Idle Opponent: ✅
